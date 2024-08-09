@@ -10,8 +10,8 @@ void showSnackBarWarning ({required BuildContext context, required String messag
     content: Row(
       children: [
         const Icon(Icons.warning, size: 18, color: Colors.yellow,),
-        const SizedBox(width: 5,),
-        Text(message, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),)
+        const SizedBox(width: 8,),
+        Expanded(child: Text(message, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),))
       ],
     ),
   ));

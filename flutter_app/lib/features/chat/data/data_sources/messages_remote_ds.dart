@@ -34,8 +34,8 @@ class MessagesRemoteDS {
     return AsklessClient.instance.readStream(route: 'conversations-with-unreceived-messages',).map((event) => List<int>.from(event));
   }
 
-  Future<DateTime> notifyLoggedUserReadConversation({required int senderUserId, required DateTime lastMessageReadHasBeenReceivedAt}) async {
-    final res = await AsklessClient.instance.create(route: 'messages-were-read', body: { "senderUserId": senderUserId, "lastMessageReadHasBeenReceivedAtMsSinceEpoch": lastMessageReadHasBeenReceivedAt.millisecondsSinceEpoch });
+  Future<DateTime> notifyLoggedUserReadConversation({required int senderUserId, required String lastMessageId}) async {
+    final res = await AsklessClient.instance.create(route: 'messages-were-read', body: { "senderUserId": senderUserId, "lastMessageId": lastMessageId });
     log("notifyLoggedUserReadConversation: ${res.success ? "send successfully" : "failed with code: ${res.error!.code} and description:  ${res.error!.description}"}", );
     if(!res.success){
       throw Failure();

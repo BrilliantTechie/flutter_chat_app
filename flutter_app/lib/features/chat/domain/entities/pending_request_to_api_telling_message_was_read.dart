@@ -2,8 +2,8 @@
 
 class PendingRequestToApiTellingMessagesWasRead {
   final int senderUserId;
-  final DateTime dateTime;
+  final String lastMessageId;
 
-  PendingRequestToApiTellingMessagesWasRead({required this.dateTime, required this.senderUserId});
+  PendingRequestToApiTellingMessagesWasRead({required this.lastMessageId, required this.senderUserId});
 
 }

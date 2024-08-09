@@ -55,8 +55,8 @@ class MessagesRepoImpl extends MessagesRepo {
     for (final pendingRequestToApiTellingMessageWasRead in (await messagesLocalDataSource.getPendingRequestListToApiTellingMessagesWereRead())) {
       try {
         await messagesRemoteDataSource.notifyLoggedUserReadConversation(
-            senderUserId: pendingRequestToApiTellingMessageWasRead.senderUserId,
-            lastMessageReadHasBeenReceivedAt: pendingRequestToApiTellingMessageWasRead.dateTime.add(const Duration(milliseconds: 1000))
+          senderUserId: pendingRequestToApiTellingMessageWasRead.senderUserId,
+          lastMessageId: pendingRequestToApiTellingMessageWasRead.lastMessageId,
         );
         await messagesLocalDataSource.removePendingRequestToApiTellingMessageWasRead(senderUserId: pendingRequestToApiTellingMessageWasRead.senderUserId);
       } catch (e) {
@@ -324,11 +324,11 @@ class MessagesRepoImpl extends MessagesRepo {
   }
 
   @override
-  Future<Either<Failure, void>> notifyLoggedUserReadConversation({required int userId}) async {
+  Future<Either<Failure, void>> notifyLoggedUserReadConversation({required int userId, required String lastMessageId}) async {
     try {
       print("notifyLoggedUserReadConversation");
       final readAt = DateTime.now();
-      await messagesLocalDataSource.putPendingRequestToApiTellingMessageWasRead(senderUserId: userId, dateTime: readAt);
+      await messagesLocalDataSource.putPendingRequestToApiTellingMessageWasRead(senderUserId: userId, lastMessageId: lastMessageId);
       final messages = messagesLocalDataSource.getMessages(userId: userId).where((element) => element.senderUserId == userId && element.readAt == null).toList();
       for (MessageEntity message in messages) {
         message.readAt = readAt;

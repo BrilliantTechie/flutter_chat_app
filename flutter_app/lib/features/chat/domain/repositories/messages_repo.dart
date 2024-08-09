@@ -16,7 +16,7 @@ abstract class MessagesRepo {
 
   Future<Either<Failure, void>> sendMessage({required SendingMessageEntity message});
 
-  Future<Either<Failure, void>> notifyLoggedUserReadConversation({required int userId});
+  Future<Either<Failure, void>> notifyLoggedUserReadConversation({required int userId, required String lastMessageId});
 
   Stream<List<ConversationEntity>> conversationsStream();
 

@@ -29,9 +29,10 @@ class RealtimeChatPageController {
     },);
     listening = getIt.get<MessagesStream>().call(userId: userId).listen((chatContent) async {
       final loggedUserId = getIt.get<AuthRepo>().loggedUserId;
-      final hasUnreadMessages = chatContent.messages.any((element) => element.readAt == null && element.receiverUserId == loggedUserId);
+      final messages = chatContent.messages.where((element) => element.readAt == null && element.receiverUserId == loggedUserId);
+      final hasUnreadMessages = messages.isNotEmpty;
       if (hasUnreadMessages) {
-        await getIt.get<MessagesRepo>().notifyLoggedUserReadConversation(userId: userId,);
+        await getIt.get<MessagesRepo>().notifyLoggedUserReadConversation(userId: userId, lastMessageId: messages.last.messageId);
       }
 
       chatContent.messages.sort((a, b) {

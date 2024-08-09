@@ -59,12 +59,12 @@ export class MessagesService {
         });
     }
 
-    async notifyMessagesWereRead(receiverUserId: number, senderUserId: number, lastMessageReadHasBeenReceived: Date) : Promise<Date> {
+    async notifyMessagesWereRead(receiverUserId: number, senderUserId: number, sentAt: Date) : Promise<Date> {
         const readAt = new Date();
         const options: FindOptionsWhere<TextMessageEntity> = {
             receiverUserId: receiverUserId,
             senderUserId: senderUserId,
-            receivedAt: LessThanOrEqual(lastMessageReadHasBeenReceived),
+            sentAt: LessThanOrEqual(sentAt),
             readAt: IsNull(),
         };
         const messages = await AppDataSource.manager.find(TextMessageEntity, { where: options });
@@ -144,7 +144,7 @@ export class MessagesService {
         );
     }
 
-    async getMessagesByIds(messagesIds: number[]) {
+    async getMessagesByIds(messagesIds: string[]) {
         return this._messagesTypeormRepo.findBy({
             messageId: In(messagesIds)
         });

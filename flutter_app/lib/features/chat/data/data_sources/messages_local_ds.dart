@@ -28,23 +28,23 @@ class MessagesLocalDS {
     });
   }
 
-  Future<void> putPendingRequestToApiTellingMessageWasRead({required int senderUserId, required DateTime dateTime}) async {
-    final Map<int, int> obj = Map<int, int>.from( _hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
-    obj[senderUserId] = dateTime.millisecondsSinceEpoch;
+  Future<void> putPendingRequestToApiTellingMessageWasRead({required int senderUserId, required String lastMessageId}) async {
+    final Map<int, String> obj = Map<int, String>.from( _hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
+    obj[senderUserId] = lastMessageId;
     await _hive.box.put(_kPendingRequestListToApiTellingMessagesWereRead, obj);
   }
   Future<void> removePendingRequestToApiTellingMessageWasRead({required int senderUserId}) async {
-    final Map<int, int> obj = Map<int, int>.from(_hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
+    final Map<int, String> obj = Map<int, String>.from(_hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
     obj.remove(senderUserId);
     await _hive.box.put(_kPendingRequestListToApiTellingMessagesWereRead, obj);
   }
 
   Future<List<PendingRequestToApiTellingMessagesWasRead>> getPendingRequestListToApiTellingMessagesWereRead() async {
     final List<PendingRequestToApiTellingMessagesWasRead> res = [];
-    final obj = Map<int, int>.from(_hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
+    final obj = Map<int, String>.from(_hive.box.get(_kPendingRequestListToApiTellingMessagesWereRead, defaultValue: <int, int>{}));
     for (final int senderUserId in obj.keys) {
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(obj[senderUserId]!);
-      res.add(PendingRequestToApiTellingMessagesWasRead(dateTime: dateTime, senderUserId: senderUserId));
+      final lastMessageId = obj[senderUserId]!;
+      res.add(PendingRequestToApiTellingMessagesWasRead(lastMessageId: lastMessageId, senderUserId: senderUserId));
     }
     return res;
   }

@@ -161,8 +161,9 @@ class _CallScreenState extends State<CallScreen> {
     liveCall?.dispose();
     callInstance?.dispose();
 
+    remoteVideoRenderer.dispose();
     localVideoRenderer.dispose();
-    localUserStream!.dispose();
+    localUserStream?.dispose();
 
     stopwatchController.dispose();
     reverseStopwatchController.dispose();
@@ -185,14 +186,15 @@ class _CallScreenState extends State<CallScreen> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      localUserStream?.dispose();
-      navigator.mediaDevices.getUserMedia({
-        'audio': true,
-        'video': args.videoCall ? {
-          'facingMode': 'user',
-        } : false,
-      }).then((localUserStream) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final localUserStream = await navigator.mediaDevices.getUserMedia({ 'audio': true, });
+        if (args.videoCall) {
+          // https://stackoverflow.com/a/73647944/4508758
+          final localVideoStream = await navigator.mediaDevices.getUserMedia({ 'video': true, });
+          localUserStream.addTrack(localVideoStream.getVideoTracks().last, addToNative: true);
+        }
+
         setState(() {
           this.localUserStream = localVideoRenderer.srcObject = localUserStream;
           if (args.callDirection == CallDirection.requestingCall) {
@@ -209,11 +211,11 @@ class _CallScreenState extends State<CallScreen> {
             callStatus = CallStatus.receivingCall;
           }
         });
-      }, onError: (error) {
+      } catch (error) {
         print("Could not get access to camera and/or microphone ${error.toString()}");
         showSnackBarWarning(context: context, message: 'Please, check the ${args.videoCall ? "camera and/or microphone permissions" : "microphone permission"}');
         Navigator.of(context).pop();
-      });
+      }
     });
   }
 

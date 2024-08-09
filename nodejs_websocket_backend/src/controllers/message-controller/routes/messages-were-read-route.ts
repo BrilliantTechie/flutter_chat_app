@@ -14,12 +14,15 @@ export class MessagesWereReadRoute {
             handleCreate: async (context) => {
                 console.log("[CREATE}] \"/messages-were-read\" handler started");
                 const loggedUserId:number = context.userId;
-                const lastMessageReadHasBeenReceivedAtMsSinceEpoch:number = context.body['lastMessageReadHasBeenReceivedAtMsSinceEpoch'];
-                console.log(`lastMessageReadHasBeenReceivedAtMsSinceEpoch: ${lastMessageReadHasBeenReceivedAtMsSinceEpoch}`);
+                const lastMessageId:string = context.body['lastMessageId'];
+                const lastMessage = (await messagesService.getMessagesByIds([lastMessageId]))[0];
+
+                if (lastMessage == null)
+                    throw Error('message ' + lastMessageId + ' not found');
+
                 const senderUserId:number = parseInt(context.body['senderUserId'] as any);
 
-                const differentDeviceTimeSpan = 15 * 1000;
-                const readAt = await messagesService.notifyMessagesWereRead(loggedUserId, senderUserId, new Date(lastMessageReadHasBeenReceivedAtMsSinceEpoch + differentDeviceTimeSpan));
+                const readAt = await messagesService.notifyMessagesWereRead(loggedUserId, senderUserId, lastMessage.sentAt);
 
                 context.successCallback({ readAt: readAt });
             },
@@ -31,7 +34,7 @@ export class MessagesWereReadRoute {
         })
     }
 
-    async getMessagesByIdsAndCheckIfLoggedUserIsTheReceiver (loggedUserId: number, messagesIds:number[], messagesService:MessagesService) : Promise<Array<TextMessageEntity>> {
+    async getMessagesByIdsAndCheckIfLoggedUserIsTheReceiver (loggedUserId: number, messagesIds:string[], messagesService:MessagesService) : Promise<Array<TextMessageEntity>> {
         const messages:Array<TextMessageEntity> = await messagesService.getMessagesByIds(messagesIds);
         if(messages.find((message) => message.receiverUserId != loggedUserId)) {
             throw new ErrorResponse({code: "PERMISSION_DENIED", description: "You are not allowed to perform to a message that is not yours"});

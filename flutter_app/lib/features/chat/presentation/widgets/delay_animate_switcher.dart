@@ -23,6 +23,7 @@ class DelayAnimateSwitcher extends StatefulWidget {
 
 class _DelayAnimateSwitcherState extends State<DelayAnimateSwitcher> {
   bool showChild2 = false;
+  bool disposed = false;
 
   @override
   void initState() {
@@ -32,15 +33,24 @@ class _DelayAnimateSwitcherState extends State<DelayAnimateSwitcher> {
       Future.delayed(
           Duration(milliseconds: math.max(widget.delay.inMilliseconds, 10)))
           .then((_) {
-        setState(() {
-          showChild2 = true;
-        });
+        if (!disposed) {
+          setState(() {
+            showChild2 = true;
+          });
+        }
       });
     } else {
       showChild2 = true;
     }
   }
-  
+
+
+  @override
+  void dispose() {
+    disposed = true;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!widget.animate || widget.animationDuration.inMilliseconds == 0) {

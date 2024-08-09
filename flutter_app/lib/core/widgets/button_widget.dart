@@ -27,7 +27,7 @@ class ButtonWidget extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5),
-          child: isLoading ? Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.blue[700]),),) : Text(text, style: TextStyle(fontSize: isSmall ? 12 : 14, letterSpacing: 2)),
+          child: isLoading ? Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.blue[700]),),) : Text(text, style: TextStyle(fontSize: isSmall ? 12 : 14, letterSpacing: 2, color: Colors.white)),
         ),
       ),
     );

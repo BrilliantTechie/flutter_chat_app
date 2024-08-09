@@ -50,7 +50,6 @@ export class UserController implements Controller {
                     return;
                 }
                 const users = await this.usersService.getAllUsers({ exceptUserId: mainUserId });
-// TODO: NO GIF, MOSTRAR DESDE A CRIAÇÃO DE USUÁRIO EM REALTIME, COMO O OUTRO USUÁRIO JÁ APARECE INSTANTANEAMENTE!
 
                 context.successCallback(users.sort((a,b) => {
                     const aName = `${a.firstName} ${a.lastName}`;
