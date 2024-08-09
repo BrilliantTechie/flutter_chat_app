@@ -14,7 +14,7 @@
       "reflect-metadata": "^0.1.13",
       "typeorm": "0.3.17",
       "utf-8-validate": "^6.0.3",
-      "askless": "^2.0.3"
+      "askless": "^2.0.4"
    },
    "devDependencies": {
       "@types/node": "^20.5.9",
